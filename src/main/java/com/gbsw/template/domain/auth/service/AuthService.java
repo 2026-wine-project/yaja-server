@@ -3,6 +3,7 @@ package com.gbsw.template.domain.auth.service;
 import com.gbsw.template.domain.auth.dto.LoginRequest;
 import com.gbsw.template.domain.auth.dto.SignUpRequest;
 import com.gbsw.template.domain.auth.dto.TokenResponse;
+import com.gbsw.template.domain.user.entity.Role;
 import com.gbsw.template.domain.user.entity.UserEntity;
 import com.gbsw.template.domain.user.repository.UserRepository;
 import com.gbsw.template.global.exception.CustomException;
@@ -30,6 +31,7 @@ public class AuthService {
         UserEntity user = UserEntity.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .role(Role.USER)
                 .build();
 
         userRepository.save(user);

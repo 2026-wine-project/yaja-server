@@ -21,12 +21,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        return new CustomUserPrincipal(user.getId(), user.getUsername(), user.getPassword());
+        return new CustomUserPrincipal(user.getId(), user.getUsername(), user.getPassword(), user.getRole());
     }
 
     public UserDetails loadUserByUserId(Long userId) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        return new CustomUserPrincipal(user.getId(), user.getUsername(), user.getPassword());
+        return new CustomUserPrincipal(user.getId(), user.getUsername(), user.getPassword(), user.getRole());
     }
 }
