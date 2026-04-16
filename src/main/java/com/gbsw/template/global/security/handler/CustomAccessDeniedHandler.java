@@ -1,8 +1,8 @@
 package com.gbsw.template.global.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gbsw.template.global.common.ApiResponse;
 import com.gbsw.template.global.exception.ErrorCode;
-import com.gbsw.template.global.exception.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,11 +27,11 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                        AccessDeniedException accessDeniedException) throws IOException {
         log.warn("접근 거부: {}", accessDeniedException.getMessage());
 
-        response.setStatus(ErrorCode.ACCESS_DENIED.getStatus().value());
+        response.setStatus(ErrorCode.FORBIDDEN.getStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
 
-        ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.ACCESS_DENIED);
-        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+        ApiResponse<Void> body = ApiResponse.fail(ErrorCode.FORBIDDEN);
+        response.getWriter().write(objectMapper.writeValueAsString(body));
     }
 }

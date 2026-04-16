@@ -40,10 +40,10 @@ public class AuthService {
     @Transactional(readOnly = true)
     public TokenResponse login(LoginRequest request) {
         UserEntity user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_CREDENTIALS));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED);
+            throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
         }
 
         return TokenResponse.builder()

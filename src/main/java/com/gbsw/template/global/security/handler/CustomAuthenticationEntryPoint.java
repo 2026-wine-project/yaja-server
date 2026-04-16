@@ -1,8 +1,8 @@
 package com.gbsw.template.global.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gbsw.template.global.common.ApiResponse;
 import com.gbsw.template.global.exception.ErrorCode;
-import com.gbsw.template.global.exception.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
 
-        ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.UNAUTHORIZED);
-        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+        ApiResponse<Void> body = ApiResponse.fail(ErrorCode.UNAUTHORIZED);
+        response.getWriter().write(objectMapper.writeValueAsString(body));
     }
 }
