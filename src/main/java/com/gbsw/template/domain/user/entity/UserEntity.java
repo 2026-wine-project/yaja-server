@@ -16,12 +16,23 @@ public class UserEntity {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String username;
+    private String email;
 
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private String name;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    private Integer admissionYear;
+
+    private Integer grade;
+
+    private Integer classNum;
+
+    private Integer studentNum;
 }
