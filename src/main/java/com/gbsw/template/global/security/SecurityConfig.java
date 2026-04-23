@@ -33,11 +33,13 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandler accessDeniedHandler;
 
     private static final String[] PUBLIC_URLS = {
-            "/api/auth/**",
+            "/auth/login",
+            "/auth/signup",
+            "/auth/refresh",
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/swagger-ui.html",
-            "/api/health"
+            "/health"
     };
 
     @Bean

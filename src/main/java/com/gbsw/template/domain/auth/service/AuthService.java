@@ -1,9 +1,10 @@
 package com.gbsw.template.domain.auth.service;
 
 import com.gbsw.template.domain.auth.dto.LoginRequest;
+import com.gbsw.template.domain.auth.dto.LoginResponse;
 import com.gbsw.template.domain.auth.dto.SignUpRequest;
 import com.gbsw.template.domain.auth.dto.TokenResponse;
-import com.gbsw.template.domain.user.entity.Role;
+import com.gbsw.template.domain.auth.dto.UserResponse;
 import com.gbsw.template.domain.user.entity.UserEntity;
 import com.gbsw.template.domain.user.repository.UserRepository;
 import com.gbsw.template.global.exception.CustomException;
@@ -24,31 +25,38 @@ public class AuthService {
 
     @Transactional
     public void signUp(SignUpRequest request) {
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new CustomException(ErrorCode.DUPLICATE_USERNAME);
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
         }
 
         UserEntity user = UserEntity.builder()
-                .username(request.getUsername())
+                .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+                .name(request.getName())
+                .role(request.getRole())
+                .admissionYear(request.getAdmissionYear())
+                .grade(request.getGrade())
+                .classNum(request.getClassNum())
+                .studentNum(request.getStudentNum())
                 .build();
 
         userRepository.save(user);
     }
 
     @Transactional(readOnly = true)
-    public TokenResponse login(LoginRequest request) {
-        UserEntity user = userRepository.findByUsername(request.getUsername())
+    public LoginResponse login(LoginRequest request) {
+        UserEntity user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_CREDENTIALS));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
         }
 
-        return TokenResponse.builder()
-                .accessToken(jwtProvider.generateAccessToken(user.getId()))
-                .refreshToken(jwtProvider.generateRefreshToken(user.getId()))
+        String accessToken = jwtProvider.generateAccessToken(user.getId(), user.getRole());
+
+        return LoginResponse.builder()
+                .accessToken(accessToken)
+                .user(UserResponse.from(user))
                 .build();
     }
 
@@ -60,13 +68,12 @@ public class AuthService {
 
         Long userId = jwtProvider.getUserIdFromToken(refreshToken);
 
-        if (!userRepository.existsById(userId)) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        }
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         return TokenResponse.builder()
-                .accessToken(jwtProvider.generateAccessToken(userId))
-                .refreshToken(jwtProvider.generateRefreshToken(userId))
+                .accessToken(jwtProvider.generateAccessToken(user.getId(), user.getRole()))
+                .refreshToken(jwtProvider.generateRefreshToken(user.getId(), user.getRole()))
                 .build();
     }
 }

@@ -1,6 +1,7 @@
 package com.gbsw.template.domain.auth.controller;
 
 import com.gbsw.template.domain.auth.dto.LoginRequest;
+import com.gbsw.template.domain.auth.dto.LoginResponse;
 import com.gbsw.template.domain.auth.dto.RefreshRequest;
 import com.gbsw.template.domain.auth.dto.SignUpRequest;
 import com.gbsw.template.domain.auth.dto.TokenResponse;
@@ -12,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -26,12 +27,17 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ApiResponse<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ApiResponse<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         return ApiResponse.success(authService.login(request));
     }
 
     @PostMapping("/refresh")
     public ApiResponse<TokenResponse> refresh(@Valid @RequestBody RefreshRequest request) {
         return ApiResponse.success(authService.refresh(request.getRefreshToken()));
+    }
+
+    @PostMapping("/logout")
+    public ApiResponse<Void> logout() {
+        return ApiResponse.success();
     }
 }
